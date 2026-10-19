@@ -1,0 +1,6 @@
+{
+  "name": "HYPNOS",
+  "description": "Touch-sensitivity optimizer and input multiplier powered by Shizuku",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

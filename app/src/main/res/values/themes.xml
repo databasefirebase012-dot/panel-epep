@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Hypnos" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="android:windowBackground">@color/black_doff</item>
+        <item name="android:colorBackground">@color/black_doff</item>
+        <item name="colorPrimary">@color/accent_red</item>
+        <item name="colorSecondary">@color/accent_red</item>
+        <item name="android:statusBarColor">@color/black_doff</item>
+        <item name="android:navigationBarColor">@color/black_doff</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
