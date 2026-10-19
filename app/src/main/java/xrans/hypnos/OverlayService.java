@@ -303,12 +303,27 @@ public class OverlayService extends Service {
         btnMenuHide.setText(isAllCirclesHidden ? "SHOW" : "HIDE");
     }
 
-    public void injectMotionEvent(float x, float y, int action, int targetUid) {
+    public boolean injectMotionEvent(float x, float y, int action, int targetUid) {
+        // Prefer the Shizuku UserService (shell UID 2000). A live Binder does not
+        // guarantee that InputManager accepted the event, so check the result.
         if (userServiceClient != null && userServiceClient.isAlive()) {
-            userServiceClient.injectEvent(x, y, action, targetUid);
+            boolean injected = userServiceClient.injectEvent(x, y, action, targetUid);
+            if (injected) {
+                return true;
+            }
+            Log.w(TAG, "Shizuku injection rejected: action=" + action
+                    + ", targetUid=" + targetUid + ", x=" + x + ", y=" + y
+                    + ". Trying local injector as fallback.");
         } else {
-            localInjector.injectEvent(x, y, action, targetUid);
+            Log.w(TAG, "Shizuku UserService unavailable; trying local injector.");
         }
+
+        boolean fallbackInjected = localInjector.injectEvent(x, y, action, targetUid);
+        if (!fallbackInjected) {
+            Log.e(TAG, "Input injection failed: action=" + action
+                    + ", targetUid=" + targetUid + ", x=" + x + ", y=" + y);
+        }
+        return fallbackInjected;
     }
 
     // ═══════════════════════════════════════════════════════════
