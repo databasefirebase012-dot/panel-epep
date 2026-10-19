@@ -47,11 +47,13 @@ public class ShizukuInputInjector {
                 String name = m.getName();
                 Class<?>[] params = m.getParameterTypes();
 
-                if ("injectInputEventToTarget".equals(name) && params.length >= 3 && InputEvent.class.isAssignableFrom(params[0])) {
+                if ("injectInputEventToTarget".equals(name) && params.length == 3 && InputEvent.class.isAssignableFrom(params[0])) {
                     m.setAccessible(true);
                     injectInputEventToTargetMethod = m;
                     Log.i(TAG, "Found injectInputEventToTarget: " + m);
-                } else if ("injectInputEvent".equals(name) && params.length >= 2 && InputEvent.class.isAssignableFrom(params[0])) {
+                } else if ("injectInputEvent".equals(name)
+                        && (params.length == 2 || params.length == 3)
+                        && InputEvent.class.isAssignableFrom(params[0])) {
                     m.setAccessible(true);
                     injectInputEventMethod = m;
                     Log.i(TAG, "Found injectInputEvent: " + m);
@@ -151,9 +153,10 @@ public class ShizukuInputInjector {
                             INJECT_INPUT_EVENT_MODE_ASYNC,
                             effectiveUid
                     );
-                    if (res instanceof Boolean && (Boolean) res) {
+                    if (Boolean.TRUE.equals(res)) {
                         return true;
                     }
+                    Log.w(TAG, "injectInputEventToTarget returned false for target UID " + effectiveUid);
                 } catch (Throwable t) {
                     Log.w(TAG, "injectInputEventToTarget invoke failed", t);
                 }
