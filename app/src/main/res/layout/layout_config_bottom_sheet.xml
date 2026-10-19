@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:letterSpacing="0.02"
-            android:text="TARGET: LINGKARAN 1 (SENSI 0.0 - 20.0)"
+            android:text="TARGET: LINGKARAN 1 (SENSI 0.0 - 10.0)"
             android:textColor="@color/accent_red"
             android:textSize="11sp"
             android:textStyle="bold" />
@@ -60,7 +60,7 @@
         </FrameLayout>
     </LinearLayout>
 
-    <!-- BARIS 1: SLIDER SENSI X & SENSI Y (RANGE: 0.00 - 20.00) -->
+    <!-- BARIS 1: SLIDER SENSI X & SENSI Y (RANGE: 0.00 - 10.00) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
                 android:id="@+id/seekSensiX"
                 android:layout_width="match_parent"
                 android:layout_height="26dp"
-                android:max="2000"
+                android:max="1000"
                 android:progress="250"
                 android:progressTint="@color/accent_red"
                 android:thumbTint="@color/accent_red" />
@@ -116,7 +116,7 @@
                 android:id="@+id/seekSensiY"
                 android:layout_width="match_parent"
                 android:layout_height="26dp"
-                android:max="2000"
+                android:max="1000"
                 android:progress="350"
                 android:progressTint="@color/accent_red"
                 android:thumbTint="@color/accent_red" />
