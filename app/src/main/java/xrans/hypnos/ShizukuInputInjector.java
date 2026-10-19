@@ -165,13 +165,23 @@ public class ShizukuInputInjector {
             // 2. Try injectInputEvent
             if (injectInputEventMethod != null) {
                 Class<?>[] paramTypes = injectInputEventMethod.getParameterTypes();
+                Object result;
                 if (paramTypes.length == 2) {
-                    injectInputEventMethod.invoke(iInputManager, event, INJECT_INPUT_EVENT_MODE_ASYNC);
-                    return true;
+                    result = injectInputEventMethod.invoke(
+                            iInputManager, event, INJECT_INPUT_EVENT_MODE_ASYNC);
                 } else if (paramTypes.length == 3) {
-                    injectInputEventMethod.invoke(iInputManager, event, INJECT_INPUT_EVENT_MODE_ASYNC, effectiveUid);
+                    result = injectInputEventMethod.invoke(
+                            iInputManager, event, INJECT_INPUT_EVENT_MODE_ASYNC, effectiveUid);
+                } else {
+                    result = Boolean.FALSE;
+                }
+
+                // IInputManager returns a boolean. Do not report success merely
+                // because reflection completed; false means the input was rejected.
+                if (Boolean.TRUE.equals(result)) {
                     return true;
                 }
+                Log.w(TAG, "injectInputEvent returned false for target UID " + effectiveUid);
             }
             return false;
         } catch (Throwable t) {
