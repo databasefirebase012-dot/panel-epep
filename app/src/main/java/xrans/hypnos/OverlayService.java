@@ -336,7 +336,7 @@ public class OverlayService extends Service {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (selectedCircle != null) {
-                    selectedCircle.sensiX = progress / 100.0f; // 0.00 to 20.00
+                    selectedCircle.sensiX = progress / 100.0f; // 0.00 to 10.00
                     tvLabelSensiX.setText(String.format("SENSI X: %.2f", selectedCircle.sensiX));
                 }
             }
@@ -352,7 +352,7 @@ public class OverlayService extends Service {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (selectedCircle != null) {
-                    selectedCircle.sensiY = progress / 100.0f; // 0.00 to 20.00
+                    selectedCircle.sensiY = progress / 100.0f; // 0.00 to 10.00
                     tvLabelSensiY.setText(String.format("SENSI Y: %.2f", selectedCircle.sensiY));
                 }
             }
@@ -483,12 +483,12 @@ public class OverlayService extends Service {
         if (target != null) {
             tvActiveCircleTitle.setText("TARGET: " + target.label + " (GESER POSISI)");
 
-            int progressX = Math.round(target.sensiX * 100.0f); // 0.00 to 20.00
-            int progressY = Math.round(target.sensiY * 100.0f); // 0.00 to 20.00
+            int progressX = Math.round(target.sensiX * 100.0f); // 0.00 to 10.00
+            int progressY = Math.round(target.sensiY * 100.0f); // 0.00 to 10.00
             int progressRadius = target.radiusDp - 10;
 
-            seekSensiX.setProgress(Math.max(0, Math.min(2000, progressX)));
-            seekSensiY.setProgress(Math.max(0, Math.min(2000, progressY)));
+            seekSensiX.setProgress(Math.max(0, Math.min(1000, progressX)));
+            seekSensiY.setProgress(Math.max(0, Math.min(1000, progressY)));
             seekRadius.setProgress(Math.max(0, Math.min(90, progressRadius)));
 
             tvLabelSensiX.setText(String.format("SENSI X: %.2f", target.sensiX));
@@ -705,9 +705,10 @@ public class OverlayService extends Service {
                             float deltaX = rawX - item.lastRawX;
                             float deltaY = rawY - item.lastRawY;
 
-                            // Real working sensitivity multiplier X and Y (0.00 to 20.00)
-                            float newInjectedX = item.lastInjectedX + (deltaX * item.sensiX);
-                            float newInjectedY = item.lastInjectedY + (deltaY * item.sensiY);
+                            // Sensitivity multiplier X/Y (0.00 to 10.00); keep coordinates on-screen.
+                            DisplayMetrics screen = getResources().getDisplayMetrics();
+                            float newInjectedX = clampToScreen(item.lastInjectedX + (deltaX * item.sensiX), screen.widthPixels);
+                            float newInjectedY = clampToScreen(item.lastInjectedY + (deltaY * item.sensiY), screen.heightPixels);
 
                             // Inject ACTION_MOVE with high sensitivity to the game
                             injectMotionEvent(newInjectedX, newInjectedY, MotionEvent.ACTION_MOVE, targetUid);
@@ -732,6 +733,10 @@ public class OverlayService extends Service {
         item.visualView = visualView;
         item.visualParams = visualParams;
         windowManager.addView(visualView, visualParams);
+    }
+
+    private float clampToScreen(float value, int dimension) {
+        return Math.max(0f, Math.min(Math.max(0, dimension - 1), value));
     }
 
     private void updateCircleViewDimensions(TouchCircleItem item) {
